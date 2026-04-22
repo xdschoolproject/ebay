@@ -5,9 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Main Scrollable Content -->
     <ScrollView
-        android:id="@+id/searchScroll"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
@@ -20,65 +18,125 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingTop="48dp"
+            android:paddingBottom="24dp">
 
             <!-- Search Bar -->
             <SearchView
                 android:id="@+id/searchBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:queryHint="Search eBay"/>
+                android:queryHint="Search items..."
+                android:iconifiedByDefault="false"
+                android:layout_marginHorizontal="24dp"
+                android:background="@drawable/search_background" />
 
-            <!-- Buttons Row -->
+            <!-- Tabs -->
             <LinearLayout
-                android:id="@+id/buttonRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="16dp"
-                android:weightSum="2">
+                android:gravity="center"
+                android:layout_marginTop="12dp">
 
-                <Button
+                <TextView
                     android:id="@+id/buttonRecent"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Recent"/>
+                    android:text="Recent"
+                    android:padding="12dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
 
-                <Button
+                <TextView
                     android:id="@+id/buttonSaved"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:text="Saved"/>
+                    android:text="Saved"
+                    android:padding="12dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
             </LinearLayout>
 
-            <!-- Placeholder for Search Results -->
+            <!-- RECENT -->
             <LinearLayout
-                android:id="@+id/resultsContainer"
+                android:id="@+id/recentSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:paddingHorizontal="16dp"
                 android:layout_marginTop="16dp">
 
-                <!-- Example Result Item -->
-                <FrameLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Recent Searches"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/recentEmpty"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="#FFE0E0E0">
+                    android:layout_height="wrap_content"
+                    android:text="No recent searches"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:visibility="gone"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Search Result Item"
-                        android:layout_gravity="center_vertical|start"
-                        android:paddingStart="16dp"/>
-                </FrameLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recentRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
+                <!-- ✅ CLEAR BUTTON -->
+                <TextView
+                    android:id="@+id/buttonClearRecent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clear recent searches"
+                    android:textSize="14sp"
+                    android:textColor="#0053D6"
+                    android:textStyle="bold"
+                    android:layout_marginTop="12dp"
+                    android:paddingVertical="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"/>
+            </LinearLayout>
+
+            <!-- SAVED -->
+            <LinearLayout
+                android:id="@+id/savedSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:paddingHorizontal="16dp"
+                android:layout_marginTop="24dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Saved Items"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/savedEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No saved items"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:visibility="gone"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/savedRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
