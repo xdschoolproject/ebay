@@ -8,11 +8,10 @@ import kotlinx.coroutines.flow.asStateFlow
 class SearchViewModel : ViewModel() {
 
     private val fullList = listOf(
-        Item("iPhone 13", "$800"),
-        Item("iPhone 13 128GB Black", "$800"),
-        Item("iPhone 13 256GB Blue", "$900"),
-        Item("iPhone 14 128GB Starlight", "$950"),
-        // ... (rest of your items)
+        Item("iPhone 13", "$800", R.drawable.iphone13),
+        Item("iPhone 13 128GB Black", "$800", R.drawable.iphone13_black),
+        Item("iPhone 13 256GB Blue", "$900", R.drawable.iphone13_blue),
+        Item("iPhone 14 128GB Starlight", "$950", R.drawable.iphone14_starlight)
     )
 
     // 1. Existing Search Flows
@@ -72,9 +71,12 @@ class SearchViewModel : ViewModel() {
     fun addSearch(query: String) {
         val cleanQuery = query.trim()
         if (cleanQuery.isEmpty()) return
+
         val currentHistory = _recentSearches.value.toMutableList()
         currentHistory.removeAll { it.title.equals(cleanQuery, ignoreCase = true) }
+
         currentHistory.add(0, Item(cleanQuery, ""))
+
         if (currentHistory.size > 10) currentHistory.removeAt(currentHistory.lastIndex)
         _recentSearches.value = currentHistory
     }

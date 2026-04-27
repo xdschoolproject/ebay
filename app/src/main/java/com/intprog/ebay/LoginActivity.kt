@@ -21,10 +21,6 @@ class LoginActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val exitBtn = findViewById<ImageButton>(R.id.btnExit)
-        exitBtn.setOnClickListener {
-            finish() // Closes this screen, showing whatever was behind it
-        }
 
         val emailField = findViewById<EditText>(R.id.editEmail)
         val passwordField = findViewById<EditText>(R.id.editPassword)
@@ -51,6 +47,10 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }
+        }
+        val exitBtn = findViewById<ImageButton>(R.id.btnExit)
+        exitBtn.setOnClickListener {
+            finish() // Closes this screen, showing whatever was behind it
         }
     }
 }

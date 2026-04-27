@@ -14,56 +14,110 @@ import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(R.layout.home) {
 
+    // Shared ViewModel across Activity → used to store and share data (like recently viewed items)
     private val viewModel: SearchViewModel by activityViewModels()
+
+    // Adapter handles how list items are displayed inside RecyclerView
     private lateinit var recentAdapter: SearchAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Get references to UI components from layout
         val recentlyViewedSection = view.findViewById<LinearLayout>(R.id.recentlyViewedSection)
         val loginRegisterSection = view.findViewById<LinearLayout>(R.id.loginRegisterSection)
         val recentRecyclerView = view.findViewById<RecyclerView>(R.id.recentRecyclerView)
 
-        // 🟢 INITIALIZE ADAPTER WITH MINI MODE
+        // Setup RecyclerView (layout + adapter + click behavior)
+        setupRecyclerView(recentRecyclerView)
+
+        // Read login state passed from previous Activity using Intent
+        // Intent = "data carrier" when navigating between screens
+        val isUserLoggedIn = requireActivity()
+            .intent
+            .getBooleanExtra("isLoggedIn", false)
+
+        // Decide which UI to show based on login state
+        if (isUserLoggedIn) {
+            showLoggedInUI(loginRegisterSection, recentlyViewedSection)
+        } else {
+            showLoggedOutUI(loginRegisterSection, recentlyViewedSection)
+        }
+    }
+
+    private fun setupRecyclerView(recyclerView: RecyclerView) {
+
+        // Initialize adapter with:
+        // - empty list (data will come later from ViewModel)
+        // - display mode (mini card layout)
+        // - click listener (what happens when user clicks an item)
         recentAdapter = SearchAdapter(
             items = emptyList(),
             displayMode = SearchAdapter.MODE_MINI_CARD
         ) { item ->
-            val bundle = Bundle().apply {
-                putString("title", item.title)
-                putString("price", item.price)
+
+            // When user clicks an item → navigate to ProductDetailsFragment
+            // Bundle is used to pass data between fragments
+            val fragment = ProductDetailsFragment().apply {
+                arguments = Bundle().apply {
+                    putString("title", item.title)
+                    putString("price", item.price)
+                }
             }
-            val fragment = ProductDetailsFragment().apply { arguments = bundle }
+
+            // Replace current fragment and add to back stack (so user can go back)
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .commit()
         }
 
-        // 🟢 SET HORIZONTAL ORIENTATION
-        recentRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        recentRecyclerView.adapter = recentAdapter
+        // LayoutManager defines how items are arranged (horizontal scrolling list)
+        recyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        val isUserLoggedIn = requireActivity().intent.getBooleanExtra("isLoggedIn", false)
+        // Attach adapter to RecyclerView
+        recyclerView.adapter = recentAdapter
+    }
 
-        if (isUserLoggedIn) {
-            loginRegisterSection.visibility = View.GONE
+    private fun showLoggedInUI(
+        loginSection: LinearLayout,
+        recentSection: LinearLayout
+    ) {
+        // Hide login/register UI since user is already logged in
+        loginSection.visibility = View.GONE
 
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    viewModel.recentlyViewed.collect { items ->
-                        if (items.isNotEmpty()) {
-                            recentlyViewedSection.visibility = View.VISIBLE
-                            recentAdapter.updateList(items)
-                        } else {
-                            recentlyViewedSection.visibility = View.GONE
-                        }
+        // Start collecting data from ViewModel
+        // lifecycleScope ensures coroutine is tied to Fragment lifecycle
+        viewLifecycleOwner.lifecycleScope.launch {
+
+            // repeatOnLifecycle ensures collection only happens when UI is visible (STARTED)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+                // Collect data from StateFlow (reactive stream)
+                viewModel.recentlyViewed.collect { items ->
+
+                    // If there are recently viewed items → show section and update UI
+                    if (items.isNotEmpty()) {
+                        recentSection.visibility = View.VISIBLE
+                        recentAdapter.updateList(items)
+                    } else {
+                        // If no data → hide section
+                        recentSection.visibility = View.GONE
                     }
                 }
             }
-        } else {
-            recentlyViewedSection.visibility = View.GONE
-            loginRegisterSection.visibility = View.VISIBLE
         }
+    }
+
+    private fun showLoggedOutUI(
+        loginSection: LinearLayout,
+        recentSection: LinearLayout
+    ) {
+        // Show login/register UI
+        loginSection.visibility = View.VISIBLE
+
+        // Hide recently viewed (since user is not logged in)
+        recentSection.visibility = View.GONE
     }
 }

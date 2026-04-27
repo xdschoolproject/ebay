@@ -3,6 +3,7 @@ package com.intprog.ebay
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -17,11 +18,13 @@ class ProductDetailsFragment : Fragment(R.layout.fragment_product_details) {
 
         val title = arguments?.getString("title") ?: ""
         val price = arguments?.getString("price") ?: ""
+        val imageResId = arguments?.getInt("imageResId") ?: android.R.drawable.ic_menu_gallery
 
         view.findViewById<TextView>(R.id.titleText).text = title
         view.findViewById<TextView>(R.id.priceText).text = price
+        view.findViewById<ImageView>(R.id.itemImage).setImageResource(imageResId)
 
-        val currentItem = Item(title, price)
+        val currentItem = Item(title, price, imageResId)
 
         // 1. Setup Watchlist button (Matches your XML ID: btnAddToWatchlist)
         val btnWatchlist = view.findViewById<Button>(R.id.btnAddToWatchlist)

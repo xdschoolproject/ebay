@@ -50,7 +50,6 @@ class SearchFragment : Fragment(R.layout.search) {
             items = emptyList(),
             displayMode = SearchAdapter.MODE_HISTORY // 🟢 This replaces isHistoryMode = true
         ) { item ->
-            // Clicking a recent search should perform the search again
             navigateToResults(item.title)
         }
 

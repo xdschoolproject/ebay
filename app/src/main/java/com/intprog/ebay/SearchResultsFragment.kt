@@ -25,17 +25,15 @@ class SearchResultsFragment : Fragment(R.layout.fragment_search_results) {
         val resultCount = view.findViewById<TextView>(R.id.resultCount)
 
         // 1. Initialize Adapter
-        // 🟢 FIXED: Added missing comma and closing parenthesis
         adapter = SearchAdapter(
             items = emptyList(),
             displayMode = SearchAdapter.MODE_SEARCH
-        ) { item ->
-            // Update "Recently Viewed" in the shared ViewModel
-            viewModel.addToRecentlyViewed(item)
+        ) { item -> viewModel.addToRecentlyViewed(item)
 
             val bundle = Bundle().apply {
                 putString("title", item.title)
                 putString("price", item.price)
+                putInt("imageResId", item.imageResId)
             }
             val fragment = ProductDetailsFragment().apply { arguments = bundle }
             parentFragmentManager.beginTransaction()
